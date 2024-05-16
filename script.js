@@ -53,6 +53,7 @@ async function getAllButton() {
             e.target.innerHTML = "Banned";
             e.target.disabled = true;
             addToBanList(banItem)
+            console.log(banlist);
         })
     })
 }
@@ -128,28 +129,33 @@ function bannedButton() {
             let banlist = JSON.parse(localStorage.getItem('banlist')) || [];
             let tempItem = banlist.find(item => item.id === +id);
             tempItem.hour++
-            setCard(banlist)
-
+            e.target.nextSibling.nextSibling.disabled = false
             e.target.parentElement.previousSibling.previousSibling.innerText = `${tempItem.hour} hours`
+            setCard(banlist)
 
         }
         const targetDiscard = e.target.classList.contains("subtract");
+        // console.log(targetDiscard);
         if (targetDiscard) {
             const id = e.target.dataset.id
+            console.log(id);
             let banlist = JSON.parse(localStorage.getItem('banlist')) || [];
 
-            console.log(e.target.parentElement.parentElement.parentElement);
             let tempItem = banlist.find(item => item.id === +id);
-            if (tempItem.hour > 1) {
+            if (tempItem.hour >= 1) {
                 tempItem.hour--
-                setCard(banlist)
+                e.target.disabled = false
+                
                 e.target.parentElement.previousSibling.previousSibling.innerText = `${tempItem.hour} hours`
-            } else {
-                let banlist = JSON.parse(localStorage.getItem('banlist')) || [];
-
-                removeBan(e.target.dataset.id)
                 setCard(banlist)
-                listBanned.removeChild(e.target.parentElement.parentElement.parentElement)
+            } else if(tempItem.hour <= 1) {
+
+                e.target.disabled = true
+                removeBan(id)
+                e.target.parentElement.previousSibling.previousSibling.innerText = `${tempItem.hour} hours`
+                console.log(e.target.parentElement.parentElement.parentElement);
+                // listBanned.removeChild(e.target.parentElement.parentElement.parentElement)
+
             }
         }
     })
@@ -168,5 +174,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     getAllButton()
     bannedButton()
 
-    console.log(dataBan)
 })
